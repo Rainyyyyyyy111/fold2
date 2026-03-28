@@ -1,0 +1,53 @@
+# Configuration for inference on SE(3) diffusion experiments.
+defaults:
+  - base
+  - override model: ff2
+  - _self_
+
+experiment:
+  eval_dir: ./ # if None the evaluation won't be saved.
+
+flow_matcher:
+  so3:
+    inference_scaling: 10.0
+
+inference:
+  name: null
+  gpu_id: 0  # CUDA GPU to use
+  seed: 123
+  full_ckpt_dir: ./ckpt/baseline/
+
+  # Directory of software, weights, and outputs.
+  pt_hub_dir: ./hub/checkpoints
+  pmpnn_dir: ./ProteinMPNN/
+  output_dir: ./results
+
+  # Path to model weights.
+  # weights_path: ./ckpt/foldflow-sfm.pth # For FoldFlow-1 with stochastic flow matcher.
+  weights_path: ./ckpt/ff2_base.pth
+
+  flow:
+    # Number of steps.
+    num_t: 50
+    # Analogous to sampling temperature.
+    noise_scale: 0.1
+    # Final t.
+    min_t: 0.01
+
+  samples:
+    # --- Zero-Shot Energy Guidance ---
+    use_guidance: True
+    attract_scale: 10.0
+    repel_scale: 5.0
+    
+    # Number of backbone samples per sequence length.
+    samples_per_length: 50
+    # Number of ESMFdold samples per backbone sample.
+    seq_per_sample: 8
+    # Minimum sequence length to sample.
+    min_length: 100
+    # Maximum sequence length to sample.
+    max_length: 300
+    # gap between lengths to sample. i.e. this script will sample all lengths
+    # in range(min_length, max_length, length_step)
+    length_step: 50
