@@ -15,12 +15,12 @@ RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bi
     mkdir -p /opt/conda/bin && mv ./bin/micromamba /opt/conda/bin/
 
 WORKDIR /app
-COPY . /app
+COPY Code/FoldFlow /app/Code/FoldFlow
 
 # 1. 剔除 -e .，防止 Singularity 只读挂载报错
 # 2. 安装全部依赖，编译 C++ 包
 # 3. 静态安装项目，清理多余缓存
-RUN cd Code/FoldFlow && \
+RUN cd /app/Code/FoldFlow && \
     sed -i '/- -e ./d' environment.yaml && \
     micromamba create -y -f environment.yaml && \
     micromamba run -n foldflow-env pip install --no-cache-dir . && \
